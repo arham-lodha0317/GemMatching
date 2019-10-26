@@ -1,6 +1,6 @@
 public class GemList 
 {
-	private class Node{
+	private static class Node{
 		private Gem gem;
 		private Node next;
 
@@ -8,7 +8,7 @@ public class GemList
 			this.gem = null;
 			this.next = null;
 		}
-		public Node(Gem gem, Node next){
+		Node(Gem gem, Node next){
 			this.gem = gem;
 			this.next = next;
 		}
@@ -17,10 +17,10 @@ public class GemList
 			this.next = null;
 		}
 
-		public Gem getGem() {
+		Gem getGem() {
 			return gem;
 		}
-		public Node getNext() {
+		Node getNext() {
 			return next;
 		}
 
@@ -33,9 +33,8 @@ public class GemList
 	}
 	private int size;
 	private Node head;
-	private Node tail;
 
-	public GemList(){
+	GemList(){
 		size = 0;
 		head = null;
 	}
@@ -50,35 +49,43 @@ public class GemList
 	}
 
 	public String toString(){
-		Node currentNode = head;
-		String str = "";
-		for (int i = 0; i < size; i++) {
-			str += currentNode.getGem().toString() + "\n";
-			currentNode = currentNode.getNext();
+		StringBuilder str = new StringBuilder();
+
+		if(!this.isEmpty()) {
+			Node currentNode = head;
+			for (int i = 0; i < size; i++) {
+				str.append(currentNode.getGem().toString()).append("\n");
+				currentNode = currentNode.getNext();
+			}
+		}
+		else {
+			System.out.println("Gemlist is empty");
 		}
 
-		return str;
+		return str.toString();
 	}
 
-	public boolean isEmpty(){
+	private boolean isEmpty(){
 		return size == 0;
 	}
 
-	public int size(){
+	int size(){
 		return size;
 	}
 
-	public void insertBefore(Gem gem, int index){
+	void insertBefore(Gem gem, int index){
 		if(isEmpty()){
 			head = new Node(gem);
-			tail = head;
 		}
-		else if(index >= size){
+		else if (index <= 0){
 			Node node = new Node(gem);
-			tail.setNext(node);
-			tail = node;
+			if(head != null) node.setNext(head);
+			head = node;
 		}
 		else {
+			if(index > size){
+				index = size-1;
+			}
 			Node currentNode = head;
 			for (int i = 0; i < index - 1; i++) {
 				currentNode = currentNode.getNext();
@@ -90,21 +97,34 @@ public class GemList
 		size++;
 	}
 
-	public Gem removeAt(int index){
-		Node currentNode = head;
+	void removeAt(int index){
 
-		for (int i = 1; i < index; i++) {
-			currentNode = currentNode.getNext();
+		if(head != null){
+			Node temp = head;
+
+			if(index == 0){
+				head = temp.getNext();
+				size--;
+				return;
+			}
+
+			for (int i = 0; temp != null && i < index -1 ; i++) {
+				temp = temp.getNext();
+			}
+
+			if(temp == null || temp.getNext() == null){
+				return;
+			}
+
+			Node next = temp.getNext().getNext();
+
+			temp.setNext(next);
+
+			size--;
 		}
-
-		Node node = currentNode.getNext();
-		currentNode.setNext(node.getNext());
-		size--;
-
-		return node.getGem();
 	}
 
-	public int score(){
+	int score(){
 		int score = 0;
 
 		Node node1 = head;
@@ -133,46 +153,69 @@ public class GemList
 		return score;
 	}
 
-	public static void main(String [] args)
-	{
+	public static void main(String [] args) {
 		GemList list = new GemList();
+		list.insertBefore(new Gem(GemType.ORANGE, 10), 0);
 		System.out.println(list);
-		System.out.println("size = " + list.size() + ", score = " + list.score());
-		list.draw(0.9);
 
-		list.insertBefore(new Gem(GemType.BLUE, 10), 0);
-		System.out.println("\n" + list);
-		System.out.println("size = " + list.size() + ", score = " + list.score());
-		list.draw(0.8);
+		list.removeAt(0);
+		System.out.println(list);
 
-		list.insertBefore(new Gem(GemType.BLUE, 20), 99);  //not a mistake, should still work
-		System.out.println("\n" + list);
-		System.out.println("size = " + list.size() + ", score = " + list.score());
-		list.draw(0.7);
-
-		list.insertBefore(new Gem(GemType.ORANGE, 30), 1);
-		System.out.println("\n" + list);
-		System.out.println("size = " + list.size() + ", score = " + list.score());
-		list.draw(0.6);
-
-		list.insertBefore(new Gem(GemType.ORANGE, 10), 2);
-		System.out.println("\n" + list);
-		System.out.println("size = " + list.size() + ", score = " + list.score());
-		list.draw(0.5);
-
-		list.insertBefore(new Gem(GemType.ORANGE, 50), 3);
-		System.out.println("\n" + list);
-		System.out.println("size = " + list.size() + ", score = " + list.score());
-		list.draw(0.4);
-
-		list.insertBefore(new Gem(GemType.GREEN, 50), 2);
-		System.out.println("\n" + list);
-		System.out.println("size = " + list.size() + ", score = " + list.score());
-		list.draw(0.3);
+		list.insertBefore(new Gem(GemType.ORANGE, 10), 0);
+		list.insertBefore(new Gem(GemType.ORANGE, 20), 1);
+		System.out.println(list);
 
 		list.removeAt(1);
-		System.out.println("\n" + list);
-		System.out.println("size = " + list.size() + ", score = " + list.score());
-		list.draw(0.1);
+		System.out.println(list);
+
+		System.out.println(Integer.MIN_VALUE);
+//		System.out.println(list);
+//		System.out.println("size = " + list.size() + ", score = " + list.score());
+//		list.draw(0.9);
+//
+//		list.insertBefore(new Gem(GemType.BLUE, 10), 0);
+//		System.out.println("\n" + list);
+//		System.out.println("size = " + list.size() + ", score = " + list.score());
+//		list.draw(0.8);
+//
+//		list.insertBefore(new Gem(GemType.BLUE, 20), 99);  //not a mistake, should still work
+//		System.out.println("\n" + list);
+//		System.out.println("size = " + list.size() + ", score = " + list.score());
+//		list.draw(0.7);
+//
+//		list.insertBefore(new Gem(GemType.ORANGE, 30), 1);
+//		System.out.println("\n" + list);
+//		System.out.println("size = " + list.size() + ", score = " + list.score());
+//		list.draw(0.6);
+//
+//		list.insertBefore(new Gem(GemType.ORANGE, 10), 2);
+//		System.out.println("\n" + list);
+//		System.out.println("size = " + list.size() + ", score = " + list.score());
+//		list.draw(0.5);
+//
+//		list.insertBefore(new Gem(GemType.ORANGE, 50), 3);
+//		System.out.println("\n" + list);
+//		System.out.println("size = " + list.size() + ", score = " + list.score());
+//		list.draw(0.4);
+//
+//		list.insertBefore(new Gem(GemType.GREEN, 50), 2);
+//		System.out.println("\n" + list);
+//		System.out.println("size = " + list.size() + ", score = " + list.score());
+//		list.draw(0.3);
+//
+//		list.removeAt(1);
+//		System.out.println("\n" + list);
+//		System.out.println("size = " + list.size() + ", score = " + list.score());
+//		list.draw(0.1);
+//
+//		list.removeAt(0);
+//		System.out.println("\n" + list);
+//		System.out.println("size = " + list.size() + ", score = " + list.score());
+//		list.draw(0.1);
+//
+//		list.removeAt(list.size() -1);
+//		System.out.println("\n" + list);
+//		System.out.println("size = " + list.size() + ", score = " + list.score());
+//		list.draw(0.1);
 	}
 }

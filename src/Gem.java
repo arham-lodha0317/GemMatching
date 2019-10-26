@@ -16,23 +16,22 @@ public class Gem
 	private GemType type;
 	private int points;
 
-	public Gem(){
-		Random random = new Random();
+	Gem(){
 		type = GemType.getRandomColor();
 
-		points = random.nextInt(11) * 5;
+		points = ((int) (Math.random() * 12) + 1) * 5;
 	}
 
-	public Gem(GemType gemType, int points){
+	Gem(GemType gemType, int points){
 		this.type = gemType;
 		this.points = points;
 	}
 
-	public GemType getType() {
+	GemType getType() {
 		return type;
 	}
 
-	public int getPoints() {
+	int getPoints() {
 		return points;
 	}
 
